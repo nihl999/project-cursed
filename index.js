@@ -46,27 +46,46 @@ async function showRandomQuestion(
   previousQuestionNumber,
   lastQuestion
 ) {
-  let question = getRandomInt(0, questions.questions.length);
+  let answers_holder = document.querySelector("#answers_holder");
+  answers_holder.innerHTML = "";
+  let questionNumber = getRandomInt(0, questions.questions.length);
   //#region Question Information
-  while (question == lastQuestion) {
-    question = getRandomInt(0, questions.questions.length);
+  while (questionNumber == lastQuestion) {
+    questionNumber = getRandomInt(0, questions.questions.length);
   }
-  question_text.textContent = questions.questions[question].question;
+  const questionData = questions.questions[questionNumber];
+  question_text.textContent = questionData.question;
   question_details.querySelector("a").textContent = capitalizeFirstLetter(
-    questions.questions[question].subject
+    questionData.subject
   );
   question_number.textContent = previousQuestionNumber + 1;
   //#endregion
   //#region Answer Information
+  for (let answer of questionData.responses) {
+    let answer_group = document.createElement("div");
+    let answer_button = document.createElement("div");
+    let answer_text = document.createElement("div");
+    answer_group.classList.add("answer_group");
+    answer_button.classList.add("answer-button-no");
+    answer_button.addEventListener("click", () => {
+      if (answer.correct) alert("Correta");
+    });
+    answer_text.classList.add("answer_text");
+    answer_text.textContent = capitalizeFirstLetter(answer.response);
+    answer_group.appendChild(answer_button);
+    answer_group.appendChild(answer_text);
+    answers_holder.appendChild(answer_group);
+    console.log(answer.response);
+  }
 
   //#endregion
-  return question;
+  return questionNumber;
 }
 
 // let actualQuestion = 0;
 // let lastQuestion = 0;
 
-fetchJSON("./cards.json").then((questions) => {
+fetchJSON("./testing/cards.json").then((questions) => {
   let actualQuestion = 0;
   let lastQuestion = 0;
   document.onkeypress = async function (e) {
